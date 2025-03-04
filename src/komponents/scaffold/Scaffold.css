@@ -5,8 +5,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 150px; /* Increased height to accommodate labels */
-  padding-bottom: 30px; /* Add padding for labels */
+  height: 180px; /* Increased height to accommodate taller spokes and labels */
+  padding-bottom: 40px; /* Increased padding for labels */
 }
 
 .scaffold-content {
