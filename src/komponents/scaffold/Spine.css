@@ -1,0 +1,13 @@
+.spine-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 20px 0;
+}
+
+.spine-line {
+  height: 2px;
+  background-color: #000;
+  border-radius: 1px;
+} 

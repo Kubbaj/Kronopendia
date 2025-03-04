@@ -1,54 +1,35 @@
-# React + TypeScript + Vite
+# Kronopendia: Interactive Timeline Visualization Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Summary
+The Kronopendia is a platform for building, sharing, and collaborating on interactive timelines covering any topic or period across 13.8 billion years of history. The core innovation is the ability to create constrained timelines for specific periods and embed them within a "Universal Timeline" that spans all of known history. This project forms the first phase of the broader "Kompendia Project," which will extend similar principles to values beyond time.
 
-Currently, two official plugins are available:
+## Core Design Philosophy
+Kronopendia employs a hierarchical visual system that maintains context and detail across vastly different time scales, from billions of years to minutes or seconds. The system uses consistent visual language and dynamic scaling to create an intuitive navigation experience through time.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Key Components
+The Kronopendia system is built around eight foundational concepts:
 
-## Expanding the ESLint configuration
+### Structural Elements
+- **SCAFFOLD**: The framework elements (Spine and Spokes) that form the temporal backbone
+- **SUBSTANCE**: The content elements (Spots and Spans) that provide historical information
+- **SPACING**: The organizational structures (Slots and Slices) that arrange elements visually
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Functional Systems
+- **SIZE**: The representation levels that control element appearance and detail
+- **STEP**: The sequence points that define the progression of intervals
+- **SCOPE**: The viewing and property contexts that determine relevance and inheritance
+- **DETAILS**: The content and styling properties that enrich timeline elements
+- **DYNAMICS**: The interactive behaviors that occur during timeline navigation
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Current Status
+This project is currently in early development, focusing on building the core SCAFFOLD components and basic navigation functionality.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Development Roadmap
+1. **Phase 1**: Core Structure - Implement Spine and Spokes with basic zoom/pan functionality
+2. **Phase 2**: Basic Visualization - Add Spots and Spans with sequence management
+3. **Phase 3**: Advanced Interaction - Implement Slots system and advanced navigation
+4. **Phase 4**: Polish and Integration - Add visual refinements and editor interface
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## Getting Started
+```javascript
+// Installation and setup instructions will be added when ready
