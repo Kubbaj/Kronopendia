@@ -1,0 +1,14 @@
+.spokes-container {
+  position: absolute;
+  height: 100%;
+  top: 0;
+}
+
+.spoke {
+  position: absolute;
+  width: 2px;
+  height: 40px; /* Height of the vertical lines */
+  background-color: #333;
+  top: 50%;
+  transform: translateY(-50%);
+} 

@@ -1,6 +1,6 @@
 import React from 'react'
 import './App.css'
-import Spine from './komponents/scaffold/Spine'
+import Scaffold from './komponents/scaffold/Scaffold'
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
         <p>Interactive Timeline Visualization Platform</p>
       </header>
       <main className="timeline-container">
-        <Spine width="80%" />
+        <Scaffold width="80%" spokeCount={10} />
       </main>
     </div>
   )
