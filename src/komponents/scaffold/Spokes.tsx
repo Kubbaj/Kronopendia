@@ -33,18 +33,18 @@ const spokeSizeConfig: Record<SpokeSize, {
     labelColor: '#666'
   },
   'major': { 
-    height: 75, 
+    height: 100, 
     width: 3, 
     color: '#444',
-    labelSize: 11,
+    labelSize: 15,
     labelWeight: 600,
     labelColor: '#444'
   },
   'macro': { 
-    height: 100, 
+    height: 150, 
     width: 5, 
     color: '#333',
-    labelSize: 12,
+    labelSize: 20,
     labelWeight: 600,
     labelColor: '#333'
   },
@@ -52,15 +52,15 @@ const spokeSizeConfig: Record<SpokeSize, {
     height: 150, 
     width: 10, 
     color: '#222',
-    labelSize: 13,
+    labelSize: 25,
     labelWeight: 700,
     labelColor: '#222'
   },
   'special': { 
-    height: 150, 
-    width: 2, 
+    height: 175, 
+    width: 3, 
     color: '#333',
-    labelSize: 12,
+    labelSize: 25,
     labelWeight: 700,
     labelColor: '#000',
     isDotted: true
@@ -68,7 +68,32 @@ const spokeSizeConfig: Record<SpokeSize, {
 };
 
 // Constant for label padding (space between spoke end and label)
-const LABEL_PADDING = 10;
+const LABEL_PADDING = 4;
+
+/**
+ * Formats the label based on the spoke size
+ * For Minor spokes, we use a condensed format (e.g., "6B" instead of "6 Bya")
+ */
+const formatSpokeLabel = (label: string, size: SpokeSize): string => {
+  // Only apply condensed format to Minor spokes
+  if (size === 'minor') {
+    // Check if it's a billion year label
+    if (label.includes('Bya')) {
+      return label.replace(' Bya', 'B');
+    }
+    // Check if it's a million year label
+    if (label.includes('Mya')) {
+      return label.replace(' Mya', 'M');
+    }
+    // Check if it's a thousand year label
+    if (label.includes('Kya')) {
+      return label.replace(' Kya', 'K');
+    }
+  }
+  
+  // Return the original label for all other sizes
+  return label;
+};
 
 const Spokes: React.FC<SpokesProps> = ({ width }) => {
   // Generate time points for the cosmic scale
@@ -102,10 +127,13 @@ const Spokes: React.FC<SpokesProps> = ({ width }) => {
       display: showLabel ? 'block' : 'none'
     };
     
+    // Format the label based on spoke size
+    const formattedLabel = formatSpokeLabel(timePoint.label, timePoint.size);
+    
     return (
       <div key={`spoke-${index}`} className="spoke-container" style={{ left: position }}>
         <div className="spoke" style={spokeStyle} />
-        <div className="spoke-label" style={labelStyle}>{timePoint.label}</div>
+        <div className="spoke-label" style={labelStyle}>{formattedLabel}</div>
       </div>
     );
   });
