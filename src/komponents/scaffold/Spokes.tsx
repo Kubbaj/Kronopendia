@@ -3,7 +3,6 @@ import './Spokes.css';
 import { generateCosmicTimePoints, calculateTimePosition, TimePoint, SpokeSize } from '../../utils/timeUtils';
 
 interface SpokesProps {
-  count?: number;
   width: string;
 }
 
@@ -13,12 +12,13 @@ const spokeSizeConfig: Record<SpokeSize, { height: number, labelHeight: number }
   'minor': { height: 40, labelHeight: 20 },
   'major': { height: 50, labelHeight: 25 },
   'macro': { height: 55, labelHeight: 27.5 },
+  'mega': { height: 58, labelHeight: 29 }, // New mega size
   'special': { height: 60, labelHeight: 30 }
 };
 
-const Spokes: React.FC<SpokesProps> = ({ count = 10, width }) => {
+const Spokes: React.FC<SpokesProps> = ({ width }) => {
   // Generate time points for the cosmic scale
-  const timePoints = generateCosmicTimePoints(count);
+  const timePoints = generateCosmicTimePoints();
   
   // Generate an array of spokes
   const spokes = timePoints.map((timePoint, index) => {

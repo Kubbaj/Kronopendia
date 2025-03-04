@@ -5,18 +5,16 @@ import './Scaffold.css';
 
 interface ScaffoldProps {
   width?: string;
-  spokeCount?: number;
 }
 
 const Scaffold: React.FC<ScaffoldProps> = ({ 
-  width = '80%',
-  spokeCount
+  width = '80%'
 }) => {
   return (
     <div className="scaffold-container">
       <div className="scaffold-content" style={{ width }}>
         <Spine width="100%" />
-        <Spokes width="100%" count={spokeCount} />
+        <Spokes width="100%" />
       </div>
     </div>
   );
