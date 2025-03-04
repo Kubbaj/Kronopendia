@@ -5,7 +5,7 @@ interface SpineProps {
   width?: string;
 }
 
-const Spine: React.FC<SpineProps> = ({ width = '80%' }) => {
+const Spine: React.FC<SpineProps> = ({ width = '100%' }) => {
   return (
     <div className="spine-container">
       <div 

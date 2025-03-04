@@ -2,7 +2,17 @@
   position: relative;
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100px; /* Give it a fixed height to ensure spokes are visible */
+  height: 150px; /* Increased height to accommodate labels */
+  padding-bottom: 30px; /* Add padding for labels */
+}
+
+.scaffold-content {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Take up full height of container */
 } 

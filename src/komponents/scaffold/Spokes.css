@@ -1,14 +1,39 @@
 .spokes-container {
   position: absolute;
+  width: 100%;
   height: 100%;
   top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none; /* Allow clicks to pass through to elements below */
+}
+
+.spoke-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%); /* Center the spoke on its position */
+  height: 100%;
 }
 
 .spoke {
-  position: absolute;
   width: 2px;
   height: 40px; /* Height of the vertical lines */
   background-color: #333;
+  /* Position the spoke to be centered on the spine */
+  position: absolute;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.spoke-label {
+  position: absolute;
+  top: calc(50% + 25px); /* Position below the spoke */
+  font-size: 11px;
+  color: #333;
+  text-align: center;
+  max-width: 100px;
+  white-space: nowrap;
+  font-weight: 500;
 } 

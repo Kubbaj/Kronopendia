@@ -10,12 +10,14 @@ interface ScaffoldProps {
 
 const Scaffold: React.FC<ScaffoldProps> = ({ 
   width = '80%',
-  spokeCount = 10
+  spokeCount
 }) => {
   return (
     <div className="scaffold-container">
-      <Spine width={width} />
-      <Spokes count={spokeCount} width={width} />
+      <div className="scaffold-content" style={{ width }}>
+        <Spine width="100%" />
+        <Spokes width="100%" count={spokeCount} />
+      </div>
     </div>
   );
 };

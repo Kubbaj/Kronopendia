@@ -10,7 +10,7 @@ function App() {
         <p>Interactive Timeline Visualization Platform</p>
       </header>
       <main className="timeline-container">
-        <Scaffold width="80%" spokeCount={10} />
+        <Scaffold width="80%" />
       </main>
     </div>
   )
