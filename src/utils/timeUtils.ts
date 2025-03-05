@@ -16,6 +16,18 @@ export interface TimePoint {
   size: SpokeSize;
 }
 
+// Add a new interface to represent the visible time range (scope)
+export interface TimeScope {
+  start: number;  // Years before present (start of visible range)
+  end: number;    // Years before present (end of visible range)
+}
+
+// Default scope shows the entire universe timeline
+export const DEFAULT_SCOPE: TimeScope = {
+  start: UNIVERSE_AGE_YEARS,
+  end: 0
+};
+
 /**
  * Defines the sequence of time intervals for spokes
  * Each entry represents a time interval in years
@@ -102,6 +114,58 @@ function formatYearLabel(yearsBP: number): string {
 }
 
 /**
+ * Calculates a new scope based on zooming in/out from a specific point
+ * @param currentScope Current visible time range
+ * @param zoomPoint Point to zoom around (in years BP)
+ * @param zoomFactor Factor to zoom by (> 1 for zoom in, < 1 for zoom out)
+ * @returns New scope after zooming
+ */
+export function calculateZoomedScope(
+  currentScope: TimeScope, 
+  zoomPoint: number, 
+  zoomFactor: number
+): TimeScope {
+  // Calculate current scope width
+  const currentWidth = currentScope.start - currentScope.end;
+  
+  // Calculate new scope width after zoom
+  const newWidth = currentWidth / zoomFactor;
+  
+  // Calculate relative position of zoom point within current scope (0-1)
+  const relativePosition = (currentScope.start - zoomPoint) / currentWidth;
+  
+  // Calculate new start and end points, maintaining the zoom point's relative position
+  const newStart = zoomPoint + relativePosition * newWidth;
+  const newEnd = zoomPoint - (1 - relativePosition) * newWidth;
+  
+  // Ensure we don't zoom beyond the universe bounds
+  return {
+    start: Math.min(UNIVERSE_AGE_YEARS, Math.max(newStart, 0)),
+    end: Math.max(0, Math.min(newEnd, UNIVERSE_AGE_YEARS))
+  };
+}
+
+/**
+ * Converts a pixel position on the timeline to years before present
+ * @param pixelPosition Position in pixels from left edge of timeline
+ * @param totalWidth Total width of timeline in pixels
+ * @param scope Current visible time range
+ * @returns Years before present at the given position
+ */
+export function pixelPositionToYearsBP(
+  pixelPosition: number, 
+  totalWidth: number, 
+  scope: TimeScope
+): number {
+  // Calculate relative position (0-1) along the timeline
+  const relativePosition = pixelPosition / totalWidth;
+  
+  // Convert to years BP based on current scope
+  const scopeWidth = scope.start - scope.end;
+  return scope.start - (relativePosition * scopeWidth);
+}
+
+/**
  * Generates time points for the current view based on the Spoke-Sequence
  * For now, we'll use a static implementation with the first 4 intervals
  * in the sequence (10B, 5B, 1B, 500M)
@@ -181,17 +245,19 @@ export function generateCosmicTimePoints(): TimePoint[] {
  * Calculates the position along the timeline for a given time point
  * @param yearsBP Years before present
  * @param totalWidth Total width of the timeline (usually a percentage)
+ * @param scope Current visible time range
  * @returns Position as a percentage string
  */
-export function calculateTimePosition(yearsBP: number, totalWidth: string): string {
-  // Convert totalWidth from percentage to a number
-  const widthValue = parseFloat(totalWidth);
+export function calculateTimePosition(
+  yearsBP: number, 
+  totalWidth: string, 
+  scope: TimeScope = DEFAULT_SCOPE
+): string {
+  // Calculate position as a percentage within the current scope
+  const scopeWidth = scope.start - scope.end;
+  const position = ((scope.start - yearsBP) / scopeWidth) * 100;
   
-  // Calculate position as a percentage (0% = oldest, 100% = present)
-  const position = (1 - (yearsBP / UNIVERSE_AGE_YEARS)) * 100;
-  
-  // Ensure position is within bounds
-  const boundedPosition = Math.max(0, Math.min(100, position));
-  
-  return `${boundedPosition}%`;
+  // We no longer bound the position to 0-100%
+  // This allows spokes to move off-screen when zooming in
+  return `${position}%`;
 } 

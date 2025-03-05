@@ -10,10 +10,12 @@
   top: 50%;
   transform: translateY(-50%);
   z-index: 1; /* Ensure spine is above spokes */
+  overflow: visible; /* Allow spine to extend beyond container */
 }
 
 .spine-line {
   height: 5px;
   background-color: #000;
   border-radius: 2px;
+  width: 100%; /* Always fill the container */
 } 

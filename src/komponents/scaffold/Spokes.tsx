@@ -1,9 +1,10 @@
 import React from 'react';
 import './Spokes.css';
-import { generateCosmicTimePoints, calculateTimePosition, TimePoint, SpokeSize } from '../../utils/timeUtils';
+import { generateCosmicTimePoints, calculateTimePosition, TimePoint, SpokeSize, TimeScope, DEFAULT_SCOPE } from '../../utils/timeUtils';
 
 interface SpokesProps {
   width: string;
+  scope?: TimeScope;
 }
 
 // Configuration for different spoke sizes with all styling properties
@@ -95,14 +96,14 @@ const formatSpokeLabel = (label: string, size: SpokeSize): string => {
   return label;
 };
 
-const Spokes: React.FC<SpokesProps> = ({ width }) => {
+const Spokes: React.FC<SpokesProps> = ({ width, scope = DEFAULT_SCOPE }) => {
   // Generate time points for the cosmic scale
   const timePoints = generateCosmicTimePoints();
   
   // Generate an array of spokes
   const spokes = timePoints.map((timePoint, index) => {
-    // Calculate position based on years before present
-    const position = calculateTimePosition(timePoint.yearsBP, width);
+    // Calculate position based on years before present and current scope
+    const position = calculateTimePosition(timePoint.yearsBP, width, scope);
     
     // Get configuration for this spoke size
     const config = spokeSizeConfig[timePoint.size];
