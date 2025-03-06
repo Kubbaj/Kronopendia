@@ -1,16 +1,10 @@
 .spine-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1; /* Ensure spine is above spokes */
-  overflow: visible; /* Allow spine to extend beyond container */
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
 }
 
 .spine-line {

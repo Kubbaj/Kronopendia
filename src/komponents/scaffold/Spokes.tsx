@@ -1,6 +1,6 @@
 import React from 'react';
 import './Spokes.css';
-import { generateCosmicTimePoints, calculateTimePosition, TimePoint, SpokeSize, TimeScope, DEFAULT_SCOPE } from '../../utils/timeUtils';
+import { generateCosmicTimePoints, calculateTimePosition, TimePoint, SpokeSize, TimeScope, DEFAULT_SCOPE, UNIVERSE_AGE_YEARS } from '../../utils/timeUtils';
 
 interface SpokesProps {
   width: string;

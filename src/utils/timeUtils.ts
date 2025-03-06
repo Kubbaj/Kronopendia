@@ -23,10 +23,14 @@ export interface TimeScope {
 }
 
 // Default scope shows the entire universe timeline
+// But we need to account for the fact that it only takes up 80% of the screen
 export const DEFAULT_SCOPE: TimeScope = {
   start: UNIVERSE_AGE_YEARS,
   end: 0
 };
+
+// The visual scope is wider than the universe when at default view (80% width)
+export const VISUAL_SCOPE_WIDTH = UNIVERSE_AGE_YEARS / 0.8; // ~17.25 billion years
 
 /**
  * Defines the sequence of time intervals for spokes
@@ -112,19 +116,28 @@ function formatYearLabel(yearsBP: number): string {
   const minutes = Math.round(yearsBP * 365 * 24 * 60);
   return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
 }
-
 /**
  * Calculates a new scope based on zooming in/out from a specific point
- * @param currentScope Current visible time range
- * @param zoomPoint Point to zoom around (in years BP)
- * @param zoomFactor Factor to zoom by (> 1 for zoom in, < 1 for zoom out)
- * @returns New scope after zooming
  */
 export function calculateZoomedScope(
   currentScope: TimeScope, 
   zoomPoint: number, 
   zoomFactor: number
 ): TimeScope {
+  // When zooming out (zoomFactor < 1), check if we're close to the full universe view
+  if (zoomFactor < 1) {
+    // Calculate current scope width
+    const currentWidth = currentScope.start - currentScope.end;
+    
+    // Calculate new scope width after zoom
+    const newWidth = currentWidth / zoomFactor;
+    
+    // If the new width would be 90% or more of the universe age, just return to default scope
+    if (newWidth >= UNIVERSE_AGE_YEARS * 0.9) {
+      return DEFAULT_SCOPE;
+    }
+  }
+  
   // Calculate current scope width
   const currentWidth = currentScope.start - currentScope.end;
   
@@ -147,20 +160,14 @@ export function calculateZoomedScope(
 
 /**
  * Converts a pixel position on the timeline to years before present
- * @param pixelPosition Position in pixels from left edge of timeline
- * @param totalWidth Total width of timeline in pixels
- * @param scope Current visible time range
- * @returns Years before present at the given position
  */
 export function pixelPositionToYearsBP(
   pixelPosition: number, 
   totalWidth: number, 
   scope: TimeScope
 ): number {
-  // Calculate relative position (0-1) along the timeline
+  // Simple linear mapping from pixel position to years BP
   const relativePosition = pixelPosition / totalWidth;
-  
-  // Convert to years BP based on current scope
   const scopeWidth = scope.start - scope.end;
   return scope.start - (relativePosition * scopeWidth);
 }
@@ -260,4 +267,4 @@ export function calculateTimePosition(
   // We no longer bound the position to 0-100%
   // This allows spokes to move off-screen when zooming in
   return `${position}%`;
-} 
+}

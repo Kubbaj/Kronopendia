@@ -15,6 +15,14 @@
   justify-content: center;
   align-items: center;
   height: 100%; /* Take up full height of container */
+  width: 100%; /* Always full width */
+}
+
+.timeline-wrapper {
+  position: relative;
+  height: 100%;
+  /* Width will be controlled by the component (80% default, 100% when zoomed) */
+  margin: 0 auto; /* Center the timeline */
 }
 
 .zoom-controls {

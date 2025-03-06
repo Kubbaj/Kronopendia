@@ -1,81 +1,64 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import Spine from './Spine';
 import Spokes from './Spokes';
 import './Scaffold.css';
-import { TimeScope, DEFAULT_SCOPE, calculateZoomedScope, pixelPositionToYearsBP, UNIVERSE_AGE_YEARS } from '../../utils/timeUtils';
+import { useZoom } from '../../hooks/useZoom';
 
-interface ScaffoldProps {
-  initialWidth?: string;
-}
-
-const Scaffold: React.FC<ScaffoldProps> = ({ 
-  initialWidth = '80%'
-}) => {
-  // State for current scope (visible time range)
-  const [scope, setScope] = useState<TimeScope>(DEFAULT_SCOPE);
-  
-  // State to track if we're in the initial view or zoomed in
-  const [isZoomedIn, setIsZoomedIn] = useState(false);
+const Scaffold: React.FC = () => {
+  // Use our zoom hook
+  const { scope, zoom } = useZoom();
   
   // Reference to the scaffold content div for measuring
   const scaffoldRef = useRef<HTMLDivElement>(null);
   
-  // Check if we're zoomed in based on the scope
+  // Add wheel event listener
   useEffect(() => {
-    // If the scope is smaller than the full timeline, we're zoomed in
-    const isZoomed = scope.start !== UNIVERSE_AGE_YEARS || scope.end !== 0;
-    setIsZoomedIn(isZoomed);
-  }, [scope]);
-  
-  // Handle zoom in button click
-  const handleZoomIn = () => {
-    const centerPoint = scope.start - (scope.start - scope.end) / 2;
-    setScope(prevScope => calculateZoomedScope(prevScope, centerPoint, 2));
-  };
-  
-  // Handle zoom out button click
-  const handleZoomOut = () => {
-    const centerPoint = scope.start - (scope.start - scope.end) / 2;
-    setScope(prevScope => calculateZoomedScope(prevScope, centerPoint, 0.5));
-  };
-  
-  // Handle mouse wheel for zooming
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    
-    if (scaffoldRef.current) {
-      // Get the x-coordinate relative to the scaffold
+    const handleWheel = (e: WheelEvent) => {
+      if (!scaffoldRef.current) return;
+      
+      e.preventDefault();
+      
       const rect = scaffoldRef.current.getBoundingClientRect();
       const pixelPosition = e.clientX - rect.left;
       const totalWidth = rect.width;
       
-      // Convert pixel position to years BP
-      const zoomPoint = pixelPositionToYearsBP(pixelPosition, totalWidth, scope);
-      
-      // Determine zoom factor based on wheel direction
-      const zoomFactor = e.deltaY < 0 ? 1.2 : 0.8;
-      
-      // Update scope
-      setScope(prevScope => calculateZoomedScope(prevScope, zoomPoint, zoomFactor));
+      // Zoom in or out based on wheel direction
+      const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+      zoom(pixelPosition, totalWidth, zoomFactor);
+    };
+    
+    const element = scaffoldRef.current;
+    if (element) {
+      element.addEventListener('wheel', handleWheel, { passive: false });
+      return () => {
+        element.removeEventListener('wheel', handleWheel);
+      };
     }
+  }, [zoom]);
+  
+  // Handle button clicks
+  const handleZoomIn = () => {
+    if (!scaffoldRef.current) return;
+    const width = scaffoldRef.current.clientWidth;
+    zoom(width / 2, width, 1.25); // Zoom in from center
   };
   
-  // Calculate the current width based on zoom state
-  const currentWidth = isZoomedIn ? '100%' : initialWidth;
+  const handleZoomOut = () => {
+    if (!scaffoldRef.current) return;
+    const width = scaffoldRef.current.clientWidth;
+    zoom(width / 2, width, 0.8); // Zoom out from center
+  };
   
   return (
     <div className="scaffold-container">
       <div 
         className="scaffold-content" 
-        style={{ width: currentWidth }}
         ref={scaffoldRef}
-        onWheel={handleWheel}
       >
         <Spine width="100%" scope={scope} />
         <Spokes width="100%" scope={scope} />
       </div>
       
-      {/* Simple zoom controls */}
       <div className="zoom-controls">
         <button onClick={handleZoomOut}>-</button>
         <button onClick={handleZoomIn}>+</button>
