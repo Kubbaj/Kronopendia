@@ -59,9 +59,12 @@ const Scaffold: React.FC = () => {
         <Spokes width="100%" scope={scope} />
       </div>
       
-      <div className="zoom-controls">
-        <button onClick={handleZoomOut}>-</button>
-        <button onClick={handleZoomIn}>+</button>
+      {/* Zoom controls at the bottom of the screen */}
+      <div className="zoom-controls-container">
+        <div className="zoom-controls">
+          <button onClick={handleZoomOut}>-</button>
+          <button onClick={handleZoomIn}>+</button>
+        </div>
       </div>
     </div>
   );
