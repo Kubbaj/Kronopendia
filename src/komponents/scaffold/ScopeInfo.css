@@ -6,10 +6,9 @@
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 10px 15px;
+  padding: 8px 15px;
   z-index: 1000;
   font-family: 'Arial', sans-serif;
-  font-size: 14px;
   max-width: 400px;
   width: auto;
   display: flex;
@@ -20,7 +19,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   width: 100%;
 }
 
@@ -39,8 +38,10 @@
 }
 
 .scope-info-range {
-  /* Special styling for the range item if needed */
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+  margin-top: 2px;
 }
 
 .scope-info-label {
@@ -50,5 +51,13 @@
 }
 
 .scope-info-value {
+  font-size: 13px;
+  color: #555;
+  min-width: 80px;
+  text-align: center;
+}
+
+.scope-info-cursor {
   color: #333;
+  font-weight: 500;
 } 
