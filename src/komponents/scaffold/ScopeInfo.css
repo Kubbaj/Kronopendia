@@ -1,0 +1,54 @@
+.scope-info {
+  position: fixed;
+  top: 40px; /* Moved to 40px from the top to sit directly beneath the header */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px 15px;
+  z-index: 1000;
+  font-family: 'Arial', sans-serif;
+  font-size: 14px;
+  max-width: 400px;
+  width: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.scope-info-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.scope-info-row {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.scope-info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.scope-info-range {
+  /* Special styling for the range item if needed */
+  font-weight: 500;
+}
+
+.scope-info-label {
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 2px;
+}
+
+.scope-info-value {
+  color: #333;
+} 

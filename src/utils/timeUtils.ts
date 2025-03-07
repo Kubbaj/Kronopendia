@@ -166,8 +166,10 @@ export function pixelPositionToYearsBP(
   totalWidth: number, 
   scope: TimeScope
 ): number {
-  // Simple linear mapping from pixel position to years BP
+  // Calculate relative position (0-1) along the timeline
   const relativePosition = pixelPosition / totalWidth;
+  
+  // Convert to years BP based on current scope
   const scopeWidth = scope.start - scope.end;
   return scope.start - (relativePosition * scopeWidth);
 }

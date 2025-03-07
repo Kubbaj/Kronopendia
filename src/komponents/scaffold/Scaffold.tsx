@@ -1,12 +1,17 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Spine from './Spine';
 import Spokes from './Spokes';
+import ScopeInfo from './ScopeInfo';
 import './Scaffold.css';
 import { useZoom } from '../../hooks/useZoom';
+import { pixelPositionToYearsBP } from '../../utils/timeUtils';
 
 const Scaffold: React.FC = () => {
   // Use our zoom hook
   const { scope, zoom, pan } = useZoom();
+  
+  // State to track cursor position
+  const [cursorPosition, setCursorPosition] = useState<number | null>(null);
   
   // Reference to the scaffold content div for measuring
   const scaffoldRef = useRef<HTMLDivElement>(null);
@@ -25,7 +30,6 @@ const Scaffold: React.FC = () => {
       // Check if shift key is pressed for panning
       if (e.shiftKey) {
         // Pan left or right based on wheel direction
-        // Note: deltaY is used because horizontal scrolling is often mapped to vertical wheel movement
         const panDelta = e.deltaY > 0 ? 50 : -50; // Adjust this value to control pan speed
         pan(panDelta, totalWidth);
       } else {
@@ -43,6 +47,24 @@ const Scaffold: React.FC = () => {
       };
     }
   }, [zoom, pan]);
+  
+  // Handle mouse move to update cursor position
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!scaffoldRef.current) return;
+    
+    const rect = scaffoldRef.current.getBoundingClientRect();
+    const pixelPosition = e.clientX - rect.left;
+    const totalWidth = rect.width;
+    
+    // Convert pixel position to years BP
+    const yearsBP = pixelPositionToYearsBP(pixelPosition, totalWidth, scope);
+    setCursorPosition(yearsBP);
+  };
+  
+  // Handle mouse leave to clear cursor position
+  const handleMouseLeave = () => {
+    setCursorPosition(null);
+  };
   
   // Handle button clicks
   const handleZoomIn = () => {
@@ -75,10 +97,15 @@ const Scaffold: React.FC = () => {
       <div 
         className="scaffold-content" 
         ref={scaffoldRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
       >
         <Spine width="100%" scope={scope} />
         <Spokes width="100%" scope={scope} />
       </div>
+      
+      {/* Scope information display */}
+      <ScopeInfo scope={scope} cursorPosition={cursorPosition} />
       
       {/* Zoom and pan controls at the bottom of the screen */}
       <div className="zoom-controls-container">
