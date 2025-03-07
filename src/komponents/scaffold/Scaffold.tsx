@@ -6,7 +6,7 @@ import { useZoom } from '../../hooks/useZoom';
 
 const Scaffold: React.FC = () => {
   // Use our zoom hook
-  const { scope, zoom } = useZoom();
+  const { scope, zoom, pan } = useZoom();
   
   // Reference to the scaffold content div for measuring
   const scaffoldRef = useRef<HTMLDivElement>(null);
@@ -22,9 +22,17 @@ const Scaffold: React.FC = () => {
       const pixelPosition = e.clientX - rect.left;
       const totalWidth = rect.width;
       
-      // Zoom in or out based on wheel direction
-      const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
-      zoom(pixelPosition, totalWidth, zoomFactor);
+      // Check if shift key is pressed for panning
+      if (e.shiftKey) {
+        // Pan left or right based on wheel direction
+        // Note: deltaY is used because horizontal scrolling is often mapped to vertical wheel movement
+        const panDelta = e.deltaY > 0 ? 50 : -50; // Adjust this value to control pan speed
+        pan(panDelta, totalWidth);
+      } else {
+        // Zoom in or out based on wheel direction
+        const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+        zoom(pixelPosition, totalWidth, zoomFactor);
+      }
     };
     
     const element = scaffoldRef.current;
@@ -34,7 +42,7 @@ const Scaffold: React.FC = () => {
         element.removeEventListener('wheel', handleWheel);
       };
     }
-  }, [zoom]);
+  }, [zoom, pan]);
   
   // Handle button clicks
   const handleZoomIn = () => {
@@ -49,6 +57,19 @@ const Scaffold: React.FC = () => {
     zoom(width / 2, width, 0.8); // Zoom out from center
   };
   
+  // Handle panning with buttons
+  const handlePanLeft = () => {
+    if (!scaffoldRef.current) return;
+    const width = scaffoldRef.current.clientWidth;
+    pan(-width * 0.1, width); // Pan left by 10% of the width
+  };
+  
+  const handlePanRight = () => {
+    if (!scaffoldRef.current) return;
+    const width = scaffoldRef.current.clientWidth;
+    pan(width * 0.1, width); // Pan right by 10% of the width
+  };
+  
   return (
     <div className="scaffold-container">
       <div 
@@ -59,11 +80,13 @@ const Scaffold: React.FC = () => {
         <Spokes width="100%" scope={scope} />
       </div>
       
-      {/* Zoom controls at the bottom of the screen */}
+      {/* Zoom and pan controls at the bottom of the screen */}
       <div className="zoom-controls-container">
         <div className="zoom-controls">
+          <button onClick={handlePanLeft}>&lt;</button>
           <button onClick={handleZoomOut}>-</button>
           <button onClick={handleZoomIn}>+</button>
+          <button onClick={handlePanRight}>&gt;</button>
         </div>
       </div>
     </div>
