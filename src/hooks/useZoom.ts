@@ -16,11 +16,23 @@ export function useZoom() {
   const [scope, setScope] = useState<TimeScope>(VISUAL_SCOPE);
   
   // Simple function to calculate a new scope when zooming
-  const zoom = useCallback((pixelPosition: number, totalWidth: number, zoomFactor: number) => {
+  const zoom = useCallback((
+    pixelPosition: number, 
+    totalWidth: number, 
+    zoomFactor: number,
+    clampedZoomPoint?: number
+  ) => {
     // Convert pixel position to a point in time
     const relativePosition = pixelPosition / totalWidth;
     const currentWidth = scope.start - scope.end;
-    const zoomPoint = scope.start - (relativePosition * currentWidth);
+    
+    // Use the provided clamped zoom point if available, otherwise calculate it
+    let zoomPoint = clampedZoomPoint;
+    if (zoomPoint === undefined) {
+      zoomPoint = scope.start - (relativePosition * currentWidth);
+      // Clamp to timeline bounds
+      zoomPoint = Math.min(UNIVERSE_AGE_YEARS, Math.max(0, zoomPoint));
+    }
     
     // Calculate new scope width
     const newWidth = currentWidth / zoomFactor;
@@ -32,7 +44,7 @@ export function useZoom() {
     }
     
     // Calculate new start and end based on zoom point
-    const newRelativePosition = relativePosition; // Keep the same relative position
+    const newRelativePosition = (scope.start - zoomPoint) / currentWidth;
     const newStart = zoomPoint + (newRelativePosition * newWidth);
     const newEnd = newStart - newWidth;
     

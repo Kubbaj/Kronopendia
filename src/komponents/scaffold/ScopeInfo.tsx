@@ -35,6 +35,12 @@ const ScopeInfo: React.FC<ScopeInfoProps> = ({ scope, cursorPosition }) => {
   // Calculate the center point (used for button zooming)
   const centerPoint = scope.start - (totalRange / 2);
   
+  // Clamp cursor position to timeline bounds
+  let displayPosition = cursorPosition;
+  if (displayPosition !== null) {
+    displayPosition = Math.min(UNIVERSE_AGE_YEARS, Math.max(0, displayPosition));
+  }
+  
   // Check if we're at the universe bounds
   const isAtLeftBound = scope.start >= UNIVERSE_AGE_YEARS;
   const isAtRightBound = scope.end <= 0;
@@ -50,7 +56,7 @@ const ScopeInfo: React.FC<ScopeInfoProps> = ({ scope, cursorPosition }) => {
           </div>
           
           <div className="scope-info-value scope-info-cursor">
-            {formatTimeValue(cursorPosition !== null ? cursorPosition : centerPoint)}
+            {formatTimeValue(displayPosition !== null ? displayPosition : centerPoint)}
           </div>
           
           <div className="scope-info-value">

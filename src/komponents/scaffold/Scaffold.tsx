@@ -5,7 +5,15 @@ import ScopeInfo from './ScopeInfo';
 import Crosshair from './Crosshair';
 import './Scaffold.css';
 import { useZoom } from '../../hooks/useZoom';
-import { pixelPositionToYearsBP } from '../../utils/timeUtils';
+import { pixelPositionToYearsBP, UNIVERSE_AGE_YEARS } from '../../utils/timeUtils';
+
+// Add to the top of the file
+declare global {
+  interface Window {
+    mouseX?: number;
+    mouseY?: number;
+  }
+}
 
 const Scaffold: React.FC = () => {
   // Use our zoom hook
@@ -35,6 +43,7 @@ const Scaffold: React.FC = () => {
     
     // Only convert if the X position is within the scaffold width
     if (relativeX >= 0 && relativeX <= totalWidth) {
+      // Get the raw years BP value without clamping
       return pixelPositionToYearsBP(relativeX, totalWidth, scope);
     }
     return null;
@@ -133,10 +142,26 @@ const Scaffold: React.FC = () => {
           // Pan left or right based on wheel direction
           const panDelta = wheelEvent.deltaY > 0 ? 50 : -50;
           pan(panDelta, totalWidth);
+          
+          // Update cursor position after panning
+          updateCursorPosition(wheelEvent.clientX);
         } else {
           // Zoom in or out based on wheel direction
           const zoomFactor = wheelEvent.deltaY < 0 ? 1.1 : 0.9;
-          zoom(pixelPosition, totalWidth, zoomFactor);
+          
+          // Get the zoom point (years BP)
+          const zoomPoint = getYearsBPFromPixel(pixelPosition);
+          
+          if (zoomPoint !== null) {
+            // Clamp the zoom point to the timeline bounds for zooming
+            const clampedZoomPoint = Math.min(UNIVERSE_AGE_YEARS, Math.max(0, zoomPoint));
+            
+            // Use the clamped zoom point for zooming
+            zoom(pixelPosition, totalWidth, zoomFactor, clampedZoomPoint);
+            
+            // Update cursor position after zooming
+            updateCursorPosition(wheelEvent.clientX);
+          }
         }
       }
     };
@@ -150,9 +175,27 @@ const Scaffold: React.FC = () => {
     return () => {
       container.removeEventListener('wheel', handleWheel);
     };
-  }, [zoom, pan]);
+  }, [zoom, pan, getYearsBPFromPixel]);
   
-  // Handle button clicks
+  // Helper function to update cursor position based on current mouse X position
+  const updateCursorPosition = useCallback((clientX: number) => {
+    if (!scaffoldRef.current) return;
+    
+    const rect = scaffoldRef.current.getBoundingClientRect();
+    
+    // Check if the cursor is horizontally aligned with the scaffold
+    if (clientX >= rect.left && clientX <= rect.right) {
+      const pixelPosition = clientX - rect.left;
+      const yearsBP = getYearsBPFromPixel(pixelPosition);
+      if (yearsBP !== null) {
+        setCursorPosition(yearsBP);
+      }
+    } else {
+      setCursorPosition(null);
+    }
+  }, [getYearsBPFromPixel]);
+  
+  // Handle zoom in button click
   const handleZoomIn = () => {
     if (!scaffoldRef.current) return;
     const width = scaffoldRef.current.clientWidth;
@@ -164,12 +207,25 @@ const Scaffold: React.FC = () => {
       const relativePos = (scope.start - cursorPosition) / scopeWidth;
       const pixelPos = relativePos * width;
       
-      zoom(pixelPos, width, 1.25);
+      // Clamp the zoom point to the timeline bounds
+      const clampedZoomPoint = Math.min(UNIVERSE_AGE_YEARS, Math.max(0, cursorPosition));
+      zoom(pixelPos, width, 1.25, clampedZoomPoint);
+      
+      // Update cursor position after zooming
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur(); // Remove focus from button
+      }
+      
+      // If we have a mouse position, update the cursor position
+      if (typeof window.mouseX !== 'undefined' && typeof window.mouseY !== 'undefined') {
+        updateCursorPosition(window.mouseX);
+      }
     } else {
-      zoom(width / 2, width, 1.25); // Zoom in from center
+      zoom(width / 2, width, 1.25);
     }
   };
   
+  // Handle zoom out button click
   const handleZoomOut = () => {
     if (!scaffoldRef.current) return;
     const width = scaffoldRef.current.clientWidth;
@@ -181,9 +237,21 @@ const Scaffold: React.FC = () => {
       const relativePos = (scope.start - cursorPosition) / scopeWidth;
       const pixelPos = relativePos * width;
       
-      zoom(pixelPos, width, 0.8);
+      // Clamp the zoom point to the timeline bounds
+      const clampedZoomPoint = Math.min(UNIVERSE_AGE_YEARS, Math.max(0, cursorPosition));
+      zoom(pixelPos, width, 0.8, clampedZoomPoint);
+      
+      // Update cursor position after zooming
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur(); // Remove focus from button
+      }
+      
+      // If we have a mouse position, update the cursor position
+      if (typeof window.mouseX !== 'undefined' && typeof window.mouseY !== 'undefined') {
+        updateCursorPosition(window.mouseX);
+      }
     } else {
-      zoom(width / 2, width, 0.8); // Zoom out from center
+      zoom(width / 2, width, 0.8);
     }
   };
   
@@ -199,6 +267,22 @@ const Scaffold: React.FC = () => {
     const width = scaffoldRef.current.clientWidth;
     pan(width * 0.1, width); // Pan right by 10% of the width
   };
+  
+  // Track mouse position globally
+  useEffect(() => {
+    const trackMousePosition = (e: MouseEvent) => {
+      // @ts-ignore - Add mouseX and mouseY to window for tracking
+      window.mouseX = e.clientX;
+      // @ts-ignore
+      window.mouseY = e.clientY;
+    };
+    
+    document.addEventListener('mousemove', trackMousePosition);
+    
+    return () => {
+      document.removeEventListener('mousemove', trackMousePosition);
+    };
+  }, []);
   
   return (
     <div className="scaffold-container">

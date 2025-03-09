@@ -1,6 +1,6 @@
 import React from 'react';
 import './Crosshair.css';
-import { TimeScope } from '../../utils/timeUtils';
+import { TimeScope, UNIVERSE_AGE_YEARS } from '../../utils/timeUtils';
 
 interface CrosshairProps {
   scope: TimeScope;
@@ -12,9 +12,17 @@ const Crosshair: React.FC<CrosshairProps> = ({ scope, position }) => {
   const centerPoint = scope.start - ((scope.start - scope.end) / 2);
   const isCenterBound = position === null;
   
+  // Get the point to use
+  let pointToUse = isCenterBound ? centerPoint : position;
+  
+  // Clamp the point to the timeline bounds (13.8B to 0)
+  // This ensures the crosshair freezes at the timeline edges
+  if (!isCenterBound && pointToUse !== null) {
+    pointToUse = Math.min(UNIVERSE_AGE_YEARS, Math.max(0, pointToUse));
+  }
+  
   // Calculate the position as a percentage along the timeline
   const scopeWidth = scope.start - scope.end;
-  const pointToUse = isCenterBound ? centerPoint : position;
   const positionPercent = ((scope.start - pointToUse) / scopeWidth) * 100;
   
   // Ensure the position is within bounds (0-100%)
