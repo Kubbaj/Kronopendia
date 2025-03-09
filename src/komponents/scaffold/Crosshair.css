@@ -1,0 +1,92 @@
+.crosshair-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 20; /* Above everything, including the spine */
+}
+
+.crosshair {
+  position: absolute;
+  top: 50%;
+  height: 0;
+  width: 0;
+  transform: rotate(45deg); /* Rotate the entire crosshair by 45 degrees */
+}
+
+/* Center-bound crosshair (thinner lines) */
+.crosshair.center-bound .crosshair-line.vertical {
+  position: absolute;
+  width: 2px; /* Thinner line */
+  height: 10px; /* Slightly shorter */
+  background-color: rgba(0, 180, 0, 0.9);
+  left: -1px;
+  border-radius: 1px;
+}
+
+.crosshair.center-bound .crosshair-line.vertical.top {
+  bottom: 5px; /* Smaller gap */
+}
+
+.crosshair.center-bound .crosshair-line.vertical.bottom {
+  top: 5px; /* Smaller gap */
+}
+
+.crosshair.center-bound .crosshair-line.horizontal {
+  position: absolute;
+  height: 2px; /* Thinner line */
+  width: 10px; /* Slightly shorter */
+  background-color: rgba(0, 180, 0, 0.9);
+  top: -1px;
+  border-radius: 1px;
+}
+
+.crosshair.center-bound .crosshair-line.horizontal.left {
+  right: 5px; /* Smaller gap */
+}
+
+.crosshair.center-bound .crosshair-line.horizontal.right {
+  left: 5px; /* Smaller gap */
+}
+
+/* Cursor-bound crosshair (thicker lines, more spread out) */
+.crosshair.cursor-bound .crosshair-line.vertical {
+  position: absolute;
+  width: 4px; /* Thicker line */
+  height: 14px; /* Longer line */
+  background-color: rgba(0, 180, 0, 0.9);
+  left: -2px;
+  border-radius: 2px;
+}
+
+.crosshair.cursor-bound .crosshair-line.vertical.top {
+  bottom: 8px; /* Larger gap */
+}
+
+.crosshair.cursor-bound .crosshair-line.vertical.bottom {
+  top: 8px; /* Larger gap */
+}
+
+.crosshair.cursor-bound .crosshair-line.horizontal {
+  position: absolute;
+  height: 4px; /* Thicker line */
+  width: 14px; /* Longer line */
+  background-color: rgba(0, 180, 0, 0.9);
+  top: -2px;
+  border-radius: 2px;
+}
+
+.crosshair.cursor-bound .crosshair-line.horizontal.left {
+  right: 8px; /* Larger gap */
+}
+
+.crosshair.cursor-bound .crosshair-line.horizontal.right {
+  left: 8px; /* Larger gap */
+}
+
+/* Remove the dot if it exists */
+.crosshair-dot {
+  display: none;
+} 
