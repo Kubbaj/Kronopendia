@@ -140,8 +140,10 @@ const Scaffold: React.FC = () => {
         // Check if shift key is pressed for panning
         if (wheelEvent.shiftKey) {
           // Pan left or right based on wheel direction
-          const panDelta = wheelEvent.deltaY > 0 ? 50 : -50;
-          pan(panDelta, totalWidth);
+          // Use deltaY for vertical wheel and deltaX for horizontal wheel if available
+          const panDelta = wheelEvent.deltaY !== 0 ? wheelEvent.deltaY : wheelEvent.deltaX;
+          const panAmount = panDelta > 0 ? 50 : -50;
+          pan(panAmount, totalWidth);
           
           // Update cursor position after panning
           updateCursorPosition(wheelEvent.clientX);
@@ -260,12 +262,32 @@ const Scaffold: React.FC = () => {
     if (!scaffoldRef.current) return;
     const width = scaffoldRef.current.clientWidth;
     pan(-width * 0.1, width); // Pan left by 10% of the width
+    
+    // Update cursor position after panning
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur(); // Remove focus from button
+    }
+    
+    // If we have a mouse position, update the cursor position
+    if (typeof window.mouseX !== 'undefined' && typeof window.mouseY !== 'undefined') {
+      updateCursorPosition(window.mouseX);
+    }
   };
   
   const handlePanRight = () => {
     if (!scaffoldRef.current) return;
     const width = scaffoldRef.current.clientWidth;
     pan(width * 0.1, width); // Pan right by 10% of the width
+    
+    // Update cursor position after panning
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur(); // Remove focus from button
+    }
+    
+    // If we have a mouse position, update the cursor position
+    if (typeof window.mouseX !== 'undefined' && typeof window.mouseY !== 'undefined') {
+      updateCursorPosition(window.mouseX);
+    }
   };
   
   // Track mouse position globally
